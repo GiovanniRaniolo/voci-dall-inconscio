@@ -367,23 +367,24 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
         />
       </div>
 
-      {/* Prominently displayed 3D verses - FIXED POSITIONING */}
+      {/* Prominently displayed 3D verses - ABSOLUTE POSITIONING WITHOUT CONSTRAINTS */}
       <div
-        ref={contentRef}
-        className="fixed inset-0 flex items-center justify-center"
+        className="absolute inset-0 z-10 overflow-visible"
         style={{
-          zIndex: 10,
-          top: "25%", // Position at 50% from top
-          left: 0,
-          right: 0,
-          transform: "translateY(-45%)", // Move up slightly from center
-          height: "auto", // Auto height instead of fixed
-          pointerEvents: "none", // Allow clicks to pass through to controls
+          height: "auto",
+          width: "100%",
+          pointerEvents: "none", // Allow clicks to pass through
         }}
       >
-        <div className="w-full h-[500px]">
-          {" "}
-          {/* Fixed height container */}
+        <div
+          ref={contentRef}
+          className="w-full h-[1000px] sm:h-[1200px] flex items-center justify-center overflow-visible"
+          style={{
+            position: "relative",
+            // Dynamic vertical positioning based on viewport height
+            marginTop: `calc(-35vh - ${isMobile ? "-50px" : "50px"})`,
+          }}
+        >
           <AnimatePresence mode="wait">
             <ThreeVerse key={currentLine} text={poemLines[currentLine]} isActive={true} />
           </AnimatePresence>

@@ -9,9 +9,45 @@ interface ThreeVerseProps {
   isActive: boolean;
 }
 
+// Add this function to normalize accented characters
+function normalizeAccents(text: string): string {
+  const accentMap: Record<string, string> = {
+    à: "a'",
+    á: "a'",
+    â: "a",
+    ã: "a",
+    ä: "a",
+    å: "a",
+    è: "e'",
+    é: "e'",
+    ê: "e",
+    ë: "e",
+    ì: "i'",
+    í: "i'",
+    î: "i",
+    ï: "i",
+    ò: "o'",
+    ó: "o'",
+    ô: "o",
+    õ: "o",
+    ö: "o",
+    ù: "u'",
+    ú: "u'",
+    û: "u",
+    ü: "u",
+    ñ: "n",
+    ç: "c",
+  };
+
+  return text
+    .split("")
+    .map((char) => accentMap[char] || char)
+    .join("");
+}
+
 const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { font, loading, error } = useFontLoader("/fonts/helvetiker_regular.typeface.json");
+  const { font, loading, error } = useFontLoader("helvetiker_regular.typeface.json");
 
   useEffect(() => {
     if (loading || error || !font || !containerRef.current) return;
@@ -42,12 +78,12 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
 
     // Calculate appropriate text size based on viewport width
     const isMobile = window.innerWidth < 768;
-    const fontSize = isMobile ? 0.33 : 0.6; // Smaller font for better fitting
-    const textDepth = isMobile ? 0.12 : 0.12; // Less depth for mobile
+    const fontSize = isMobile ? 0.28 : 0.5; // Adjusted size
+    const textDepth = isMobile ? 0.08 : 0.1; // Adjusted depth
 
-    // For responsive layout - reduce max width on mobile for better word wrapping
-    const lineMaxWidth = isMobile ? 3 : 5.5; // Increased from 1.4/4.0 to allow more words per line
-    const lineSpacing = isMobile ? 0.7 : 0.9; // Increased from 0.35/0.5 to 0.6/0.9 for more space between lines
+    // More conservative lineMaxWidth
+    const lineMaxWidth = isMobile ? 2.5 : 5.0;
+    const lineSpacing = isMobile ? 0.75 : 1.0; // More space between lines
 
     // Text materials with better contrast for mobile
     const materialFront = new THREE.MeshStandardMaterial({
@@ -75,7 +111,7 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     const wordGeometries: THREE.BufferGeometry[] = [];
 
     words.forEach((word) => {
-      const geometry = new TextGeometry(word, {
+      const geometry = new TextGeometry(normalizeAccents(word), {
         font: font,
         size: fontSize,
         depth: textDepth,
@@ -125,6 +161,16 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     if (currentLine.words.length > 0) {
       lines.push(currentLine);
     }
+
+    // Add this after lines are calculated
+    console.log(
+      `Lines calculated: ${lines.length}, Words: ${words.length}, Line details:`,
+      lines.map((line) => ({
+        wordCount: line.words.length,
+        width: line.width,
+        words: line.words.map((idx) => words[idx]),
+      }))
+    );
 
     // Apply more vertical offset for the text
     const textGroupYOffset = isMobile
@@ -179,13 +225,21 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     pointLight2.position.set(-5, -5, 5);
     scene.add(pointLight2);
 
-    // Position camera - make sure it's pulled back enough to see all content
-    camera.position.z = isMobile
-      ? Math.max(5.2, 4.2 + lines.length * 0.8) // Pull back more to fit text
-      : Math.max(5.2, 4.7 + (lines.length > 2 ? lines.length * 0.8 : 0));
+    // Update the camera positioning section with much larger values
+    // Calculate how much to pull back the camera based on line count
+    const cameraZBase = isMobile ? 5.5 : 6.0;
+    const cameraZMultiplier = isMobile ? 1.2 : 1.0;
+    const extraCameraZ = isMobile ? 2.0 : 1.5;
 
-    // Make a MUCH more significant adjustment to the camera Y position
-    camera.position.y = isMobile ? 3.0 : 2.5; // Even higher camera position
+    // Pull back camera much further based on line count
+    const cameraZ = Math.max(cameraZBase, cameraZBase + lines.length * cameraZMultiplier + extraCameraZ);
+
+    // Position camera much further back
+    camera.position.z = cameraZ;
+    camera.position.y = isMobile ? 3.0 : 2.5; // Keep higher camera position
+
+    // Log the camera position and line count for debugging
+    console.log(`Camera Z: ${cameraZ}, Lines: ${lines.length}`);
 
     // Animation loop with subtle movement
     let frameId: number;
@@ -250,6 +304,16 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     };
   }, [font, loading, error, text, isActive]);
 
+  // Also add debug for container dimensions
+  useEffect(() => {
+    if (containerRef.current) {
+      console.log("Container dimensions:", {
+        width: containerRef.current.clientWidth,
+        height: containerRef.current.clientHeight,
+      });
+    }
+  }, [containerRef.current?.clientWidth, containerRef.current?.clientHeight]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -265,16 +329,16 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     return <div className="text-center text-red-400">Errore nel caricamento del testo 3D</div>;
   }
 
+  // Update the return statement to ensure the component fills its container
   return (
     <motion.div
       ref={containerRef}
       className="w-full h-full"
       style={{
-        position: "absolute", // Absolute positioning within parent
-        inset: 0, // Fill the parent container
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        minHeight: "100%",
+        overflow: "visible", // Critical: Allow overflow outside container
+        position: "absolute", // Position absolute in parent
+        inset: 0,
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
