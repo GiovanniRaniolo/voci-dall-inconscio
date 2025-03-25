@@ -24,3 +24,52 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add these styles at the end of your globals.css file */
+
+.perspective-container {
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  overflow: hidden;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotateX(15deg);
+  }
+  50% {
+    transform: translateY(-10px) rotateX(18deg);
+  }
+  100% {
+    transform: translateY(0px) rotateX(15deg);
+  }
+}
+
+.perspective-container h1 {
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.8));
+  }
+  100% {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  }
+}
+
+.perspective-container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  /* background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%); */
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  animation: glow 5s ease-in-out infinite;
+}
