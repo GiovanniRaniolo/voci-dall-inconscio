@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import PoetryCover from "@/components/PoetryCover";
 import PoemReader from "@/components/PoemReader";
 import Header from "@/components/Header";
