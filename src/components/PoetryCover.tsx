@@ -143,7 +143,7 @@ const PoetryCover: React.FC<PoetryCoverProps> = ({ poem, onClick }) => {
               borderLeft: "2px solid rgba(139, 92, 246, 0.3)",
             }}
           >
-            <span className="text-xs uppercase tracking-wider text-gray-400">Poesia #{poem.id}</span>
+            <span className="text-xs uppercase tracking-wider text-gray-400">#{poem.id}</span>
           </motion.div>
 
           <h2
@@ -169,7 +169,7 @@ const PoetryCover: React.FC<PoetryCoverProps> = ({ poem, onClick }) => {
             transition: { delay: 0.5, duration: 0.8 },
           }}
         >
-          <div className="line-clamp-2 relative">
+          <div className="line-clamp-2 relative text-xs">
             <motion.div
               className="absolute top-0 left-0 w-12 h-full"
               style={{
@@ -187,7 +187,7 @@ const PoetryCover: React.FC<PoetryCoverProps> = ({ poem, onClick }) => {
                 delay: animSeed % 5,
               }}
             />
-            {poem.content.split("\n")[0]}...
+            {poem.content.split("\n")[0].replace(/,/g, "")}...
           </div>
         </motion.div>
 
