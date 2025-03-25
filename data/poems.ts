@@ -80,9 +80,14 @@ Vedrò una luce`,
   {
     id: 8,
     title: "Abbandonico",
-    content: `Strozzatura, costrizione, maledetto torpore. Raziocinio spietato nel sabotaggio del sé.
-È lo Spirito senza velocità di fuga, per il gelido inverno che nel petto l'attrae.
-Piange e suda e si dimena. Non può credere che il suo vuoto aperto debba manifestarsi ai suoi simili per domarne il rifiuto`,
+    content: `Strozzatura - costrizione - maledetto torpore. 
+    Raziocinio spietato nel sabotaggio del sé.
+È lo Spirito senza velocità di fuga,
+ per il gelido inverno che nel petto l'attrae.
+Piange e suda e si dimena. 
+Non può credere che il suo vuoto aperto 
+debba manifestarsi ai suoi simili 
+per domarne il rifiuto.`,
   },
   {
     id: 9,

@@ -241,7 +241,7 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
               repeat: Infinity,
               repeatType: "loop",
               ease: "linear",
-              delay: Math.random() * 5,
+              delay: Math.random() * 1.5,
             }}
           />
         ))}
@@ -263,7 +263,7 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
       </div>
 
       {/* Progress indicator */}
-      <div className="relative h-0.5 w-full max-w-md mx-auto mb-4">
+      <div className="relative h-1 w-3/4 max-w-md mx-auto mb-4 ">
         <div className="absolute inset-0 rounded-full bg-gray-800" />
         <motion.div
           className="absolute inset-y-0 left-0 rounded-full"

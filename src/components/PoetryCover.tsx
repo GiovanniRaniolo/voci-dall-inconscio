@@ -89,28 +89,46 @@ const PoetryCover: React.FC<PoetryCoverProps> = ({ poem, onClick }) => {
         />
 
         {/* Animated particle effects */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full w-1 h-1 bg-white opacity-60"
-            style={{
-              top: `${20 + i * 15}%`,
-              left: `${10 + i * 20}%`,
-              filter: "blur(1px)",
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.4, 0.8, 0.4],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              repeatType: "mirror",
-              delay: i * 0.8,
-            }}
-          />
-        ))}
+        {(() => {
+          // Determine a variable number of particles per card based on animSeed
+          const particleCount = 3 + Math.floor(animSeed % 4); // yields 3-6 particles
+          return [...Array(particleCount)].map((_, i) => {
+            // Calculate base offsets influenced by animSeed
+            const baseTop = 10 + (animSeed % 30); // a base top offset between 10% and 40%
+            const baseLeft = 5 + (animSeed % 25); // a base left offset between 5% and 30%
+
+            // Vary each particle position based on its index and the seed
+            const topOffset = baseTop + i * (5 + ((animSeed + i) % 10)); // adds dynamic vertical spacing
+            const leftOffset = baseLeft + i * (10 + ((animSeed + i * 2) % 15)); // adds dynamic horizontal spacing
+
+            // Vary particle animation timing
+            const particleDuration = 4 + i + (animSeed % 3); // duration varies per particle
+            const particleDelay = i * 0.8 + (animSeed % 2) * 0.5; // slight delay variation
+
+            return (
+              <motion.div
+                key={i}
+                className="absolute rounded-full w-1.5 h-1.5 bg-[rgba(139,92,246,0.9)]"
+                style={{
+                  top: `${topOffset}%`,
+                  left: `${leftOffset}%`,
+                  filter: "blur(1px)",
+                }}
+                animate={{
+                  y: [0, -20, 0],
+                  opacity: [0.4, 0.8, 0.4],
+                  scale: [1, 1.5, 1],
+                }}
+                transition={{
+                  duration: particleDuration,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  delay: particleDelay,
+                }}
+              />
+            );
+          });
+        })()}
       </div>
 
       {/* Dark overlay for better text legibility */}

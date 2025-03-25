@@ -69,14 +69,14 @@ const Header: React.FC = () => {
 
           {/* Subtitle with gentle fade-in and subtle animation */}
           <motion.p
-            className="text-xs sm:text-sm text-gray-400 italic relative"
+            className="text-md text-indigo-400 italic relative"
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 0.8, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
           >
             <motion.span
               animate={{
-                opacity: [0.7, 0.9, 0.7],
+                opacity: [0.6, 0.9, 0.6],
               }}
               transition={{
                 duration: 6,
@@ -85,7 +85,7 @@ const Header: React.FC = () => {
                 ease: "easeInOut",
               }}
             >
-              raccolta di poesie vomitate
+              raccolta di versi vomitati
             </motion.span>
           </motion.p>
         </div>

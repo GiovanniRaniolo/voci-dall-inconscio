@@ -9,14 +9,14 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-t border-gray-800 pt-6">
           {/* Credit section */}
           <motion.div className="flex items-center gap-2 text-sm text-gray-400" whileHover={{ color: "rgba(255,255,255,0.9)" }}>
-            Made with <Heart size={14} className="text-pink-500 fill-pink-500 animate-pulse" /> by
+            Made with <Heart size={16} className="text-pink-500 fill-pink-500 animate-pulse" /> by
             <span className="font-medium">Giovanni Raniolo</span>
           </motion.div>
 
           {/* Social links */}
           <div className="flex gap-4">
             <motion.a
-              href="https://instagram.com/your_username"
+              href="https://instagram.com/0x_jitzu"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
@@ -24,11 +24,11 @@ const Footer: React.FC = () => {
               whileTap={{ scale: 0.95 }}
             >
               <Instagram size={18} className="text-pink-400" />
-              <span>@your_username</span>
+              <span>@0x_jitzu</span>
             </motion.a>
 
             <motion.a
-              href="mailto:your.email@example.com"
+              href="mailto:gianniraniolo80@gmail.com"
               className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
