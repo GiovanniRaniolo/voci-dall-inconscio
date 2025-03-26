@@ -59,7 +59,7 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
     // Desktop standard (risoluzione tipica 1366x768, 1440x900, 1920x1080)
     else if (width >= 1025 && width <= 1920) {
       // Per desktop standard, alziamo ulteriormente il testo
-      return "190px"; // Aumentato significativamente da -50px a -150px
+      return "200px"; // Aumentato significativamente da -50px a -150px
     }
     // Desktop grandi (risoluzione oltre 1920px)
     else {
@@ -120,23 +120,23 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
       className="fixed inset-0 bg-black text-white overflow-hidden flex flex-col z-50 backdrop-blur-sm"
     >
       {/* Enhanced background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-black to-black -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/15 via-black/90 to-black -z-10" />
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(circle at 30% 20%, rgba(109,40,217,0.15) 0%, rgba(0,0,0,0) 50%)",
+          background: "radial-gradient(circle at 30% 20%, rgba(109,40,217,0.20) 0%, rgba(0,0,0,0) 50%)",
         }}
       />
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(circle at 70% 80%, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 50%)",
+          background: "radial-gradient(circle at 70% 80%, rgba(236,72,153,0.20) 0%, rgba(0,0,0,0) 50%)",
         }}
       />
 
       {/* Moving particles - più grandi e più visibili */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(120)].map((_, i) => (
+        {[...Array(50)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full"
@@ -241,21 +241,24 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
 
       {/* Prominently displayed 3D verses - ABSOLUTE POSITIONING WITHOUT CONSTRAINTS */}
       <div
-        className="absolute inset-0 z-10 overflow-visible"
+        className="absolute inset-0 z-10"
         style={{
           height: "auto",
           width: "100%",
           pointerEvents: "none", // Allow clicks to pass through
+          overflow: "visible", // Imposta overflow: visible direttamente nello stile
         }}
       >
         <div
           ref={contentRef}
-          className="w-full h-[1000px] sm:h-[1200px] flex items-center justify-center overflow-visible"
+          className="w-full h-[1000px] sm:h-[1200px] flex items-center justify-center"
           style={{
             position: "relative",
-            // Usa l'offset calcolato dinamicamente
             marginTop: `calc(-35vh - ${verticalOffset})`,
-            marginLeft: `${isMobile ? "-16px" : "0"}`,
+            // Modifica per centrare meglio su mobile e dare più spazio a destra
+            marginLeft: isMobile ? "-40px" : "-28px", // Ridotto da -26px a -15px
+            width: isMobile ? "calc(100% + 30px)" : "100%", // Allarga il contenitore su mobile
+            overflow: "visible", // Assicura che l'overflow sia visibile
           }}
         >
           <AnimatePresence mode="wait">
@@ -293,18 +296,6 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
         >
           <ChevronDown className="w-6 h-6" />
         </motion.button>
-      </div>
-
-      <div className="text-center text-xs text-gray-400 pb-20">
-        {/* <span
-          style={{
-            background: "linear-gradient(to right, rgba(139,92,246,1), rgba(236,72,153,1))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Linea {currentLine + 1} di {poemLines.length}
-        </span> */}
       </div>
     </motion.div>
   );

@@ -73,32 +73,36 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
 
     containerRef.current.appendChild(renderer.domElement);
 
+    // Modifica i parametri di qualità mobile per avvicinarli a desktop
     const isMobile = window.innerWidth < 768;
+    const isHighEndMobile = typeof window !== "undefined" && window.devicePixelRatio >= 2 && window.innerWidth >= 375;
+
+    // Usa parametri di qualità più alti sui dispositivi mobili high-end
     const fontSize = isMobile ? 0.35 : 0.6;
     const textDepth = isMobile ? 0.4 : 0.4;
     const lineMaxWidth = isMobile ? 2.0 : 4.0;
-    const lineSpacing = isMobile ? 0.75 : 1.3;
+    const lineSpacing = isMobile ? 0.75 : 1.1;
 
     // Modifica il materialFront per reagire meglio alle luci rosa
     const materialFront = new THREE.MeshPhysicalMaterial({
-      color: 0xf0f0ff,
+      color: 0xffffff,
       metalness: 0.7, // Aumentato per riflettere meglio la luce
-      roughness: 0.1, // Ridotto per riflessi più nitidi
-      clearcoat: 0.3, // Aggiunge un sottile strato lucido
+      roughness: 0.02, // Ridotto per riflessi più nitidi
+      clearcoat: 0.8, // Aggiunge un sottile strato lucido
       clearcoatRoughness: 0.1,
       reflectivity: 0.5,
-      emissive: 0x000000,
+      emissive: 0x222222,
     });
 
     // Modifica il materialSide per reagire in modo più evidente alle luci rosa
     const materialSide = new THREE.MeshPhysicalMaterial({
       color: 0x9d4edd,
-      metalness: 0.7,
+      metalness: 0.8,
       roughness: 0.01,
       emissive: 0x6d28d9,
-      emissiveIntensity: 0.33,
-      clearcoat: 0.2,
-      clearcoatRoughness: 0.05,
+      emissiveIntensity: 0.2,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.01,
     });
 
     const materials = [materialFront, materialSide];
@@ -120,12 +124,12 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
         font: font,
         size: fontSize,
         depth: textDepth,
-        curveSegments: isMobile ? 4 : 6,
+        curveSegments: isMobile ? (isHighEndMobile ? 5 : 4) : 6, // Aumentato per mobile high-end
         bevelEnabled: true,
         bevelThickness: 0.02,
         bevelSize: 0.01,
         bevelOffset: 0,
-        bevelSegments: isMobile ? 2 : 4,
+        bevelSegments: isMobile ? (isHighEndMobile ? 3 : 2) : 4, // Aumentato per mobile high-end
       });
 
       geometry.computeBoundingBox();
@@ -205,7 +209,7 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     textGroup.rotation.y = initialTiltX;
     textGroup.rotation.x = initialTiltY;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
     //luce direzionale rosa concentrata e puntiforme
@@ -253,10 +257,11 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     pointLight1.decay = 0.1;
     scene.add(pointLight1);
 
-    const pointLight3 = new THREE.PointLight(0x3b82f6, 13.0);
-    pointLight3.position.set(0, -1.5, 4);
-    pointLight3.distance = 10;
-    pointLight3.decay = 0.2;
+    // Giallo più naturale e meno intenso
+    const pointLight3 = new THREE.PointLight(0xffe082, 22.0); // Giallo paglierino naturale
+    pointLight3.position.set(8, 0, 0);
+    pointLight3.distance = 15;
+    pointLight3.decay = 0.35; // Aumentato leggermente per una dissolvenza più naturale
     scene.add(pointLight3);
 
     const cameraZBase = isMobile ? 5.5 : 6.0;
@@ -287,11 +292,14 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
       pointLight1.position.y = Math.cos(angle2) * 3 * lightAmplitude;
       pointLight1.position.z = 4 + Math.sin(angle2 * 0.7) * 1.5 * lightAmplitude;
 
-      // Movimento della luce blu
-      const angle3 = time * lightSpeed * 0.05 + Math.PI;
-      pointLight3.position.x = Math.cos(angle3) * 4 * lightAmplitude;
-      pointLight3.position.y = -0.5 + Math.sin(angle3 * 1.1) * 3 * lightAmplitude;
-      pointLight3.position.z = 3 + Math.cos(angle3 * 0.9) * 2 * lightAmplitude;
+      // Movimento della luce viola scura - movimento principalmente laterale
+      const angle3 = time * lightSpeed * 0.1 + Math.PI;
+      // Movimento ampio sull'asse X (da un lato all'altro)
+      pointLight3.position.x = 6 + Math.cos(angle3) * 5 * lightAmplitude;
+      // Movimento limitato sull'asse Y
+      pointLight3.position.y = Math.sin(angle3 * 0.5) * 2 * lightAmplitude;
+      // Posizione Z più stabile, leggermente davanti al testo
+      pointLight3.position.z = 2 + Math.cos(angle3 * 0.2) * lightAmplitude;
 
       // Movimento delle piccole luci rosa puntiformi tra le lettere
       spotlights.forEach((spotlight, index) => {
