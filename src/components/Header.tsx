@@ -69,7 +69,7 @@ const Header: React.FC = () => {
 
           {/* Subtitle with gentle fade-in and subtle animation */}
           <motion.p
-            className="text-md text-indigo-400 italic relative"
+            className="text-xl text-indigo-400 italic relative"
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 0.8, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
