@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Poem } from "../../types";
-import ThreeVerse from "../ThreeVerse";
+import ThreeVerse from "../ThreeVerse/index";
 import SmallTitle from "./SmallTitle";
 import ParticlesBackground from "./ParticlesBackground";
 import Navigation from "./Navigation";

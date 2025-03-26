@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import PoetryCover from "@/components/PoetryCover";
-// Cambia questa importazione per puntare alla nuova posizione
-import PoemReader from "@/components/PoemReader/index"; // Ora punta a components/PoemReader/index.tsx
+import PoemReader from "@/components/PoemReader/index";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Poem } from "@/types";
