@@ -86,7 +86,7 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     // Modifica il materialFront per reagire meglio alle luci rosa
     const materialFront = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      metalness: 0.7, // Aumentato per riflettere meglio la luce
+      metalness: 0.5, // Aumentato per riflettere meglio la luce
       roughness: 0.02, // Ridotto per riflessi più nitidi
       clearcoat: 0.8, // Aggiunge un sottile strato lucido
       clearcoatRoughness: 0.1,
@@ -258,7 +258,7 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     scene.add(pointLight1);
 
     // Giallo più naturale e meno intenso
-    const pointLight3 = new THREE.PointLight(0xffe082, 22.0); // Giallo paglierino naturale
+    const pointLight3 = new THREE.PointLight(0x9d4edd, 22.0); // Giallo paglierino naturale
     pointLight3.position.set(8, 0, 0);
     pointLight3.distance = 15;
     pointLight3.decay = 0.35; // Aumentato leggermente per una dissolvenza più naturale

@@ -26,9 +26,130 @@ const SmallTitle = ({ text }: { text: string }) => {
   );
 };
 
+// Sostituisci completamente il ParticlesBackground con una versione CSS-only
+const ParticlesBackground = React.memo(() => {
+  // Pre-genera i dati per i CSS
+  const particles = Array(50)
+    .fill(0)
+    .map(() => ({
+      width: Math.random() * 4 + 2,
+      height: Math.random() * 4 + 2,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      animationDuration: `${Math.random() * 15 + 10}s`,
+      delay: `${Math.random() * 5}s`,
+      opacity: Math.random() * 0.9 + 0.4,
+      colorType: Math.floor(Math.random() * 3),
+    }));
+
+  const largeParticles = Array(15)
+    .fill(0)
+    .map(() => ({
+      width: Math.random() * 6 + 3,
+      height: Math.random() * 6 + 3,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      animationDuration: `${Math.random() * 20 + 15}s`,
+      delay: `${Math.random() * 8}s`,
+      opacity: Math.random() * 0.8 + 0.4,
+      colorType: Math.floor(Math.random() * 3),
+      horizontalShift: Math.random() * 50 - 25,
+    }));
+
+  return (
+    <>
+      <style jsx global>{`
+        @keyframes floatUp {
+          0% {
+            transform: translateY(0);
+            opacity: 0;
+          }
+          10% {
+            opacity: var(--opacity);
+          }
+          90% {
+            opacity: var(--opacity);
+          }
+          100% {
+            transform: translateY(-300px);
+            opacity: 0;
+          }
+        }
+
+        @keyframes floatUpLarge {
+          0% {
+            transform: translate(0, 0);
+            opacity: 0;
+          }
+          10% {
+            opacity: var(--opacity);
+          }
+          90% {
+            opacity: var(--opacity);
+          }
+          100% {
+            transform: translate(var(--x-shift), -400px);
+            opacity: 0;
+          }
+        }
+      `}</style>
+
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particles.map((p, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${p.width}px`,
+              height: `${p.height}px`,
+              top: `${p.top}%`,
+              left: `${p.left}%`,
+              background: p.colorType === 0 ? "rgba(139,92,246,0.9)" : p.colorType === 1 ? "rgba(236,72,153,0.9)" : "rgba(255,255,255,0.9)",
+              filter: "blur(0.8px)",
+              boxShadow: p.colorType === 0 ? "0 0 8px 2px rgba(139,92,246,0.3)" : p.colorType === 1 ? "0 0 8px 2px rgba(236,72,153,0.3)" : "0 0 8px 2px rgba(255,255,255,0.3)",
+              animation: `floatUp ${p.animationDuration} infinite`,
+              animationDelay: p.delay,
+              animationTimingFunction: "linear",
+              // Usa casting per le proprietà CSS personalizzate
+              ...({ "--opacity": p.opacity } as React.CSSProperties),
+              willChange: "transform, opacity",
+            }}
+          />
+        ))}
+
+        {largeParticles.map((p, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${p.width}px`,
+              height: `${p.height}px`,
+              top: `${p.top}%`,
+              left: `${p.left}%`,
+              background: p.colorType === 0 ? "rgba(124,58,237,0.9)" : p.colorType === 1 ? "rgba(244,114,182,0.9)" : "rgba(255,255,255,0.9)",
+              filter: "blur(1.5px)",
+              boxShadow: p.colorType === 0 ? "0 0 15px 4px rgba(139,92,246,0.4)" : p.colorType === 1 ? "0 0 15px 4px rgba(236,72,153,0.4)" : "0 0 15px 4px rgba(255,255,255,0.4)",
+              animation: `floatUpLarge ${p.animationDuration} infinite`,
+              animationDelay: p.delay,
+              animationTimingFunction: "linear",
+              // Usa casting per entrambe le variabili CSS
+              ...({ "--opacity": p.opacity, "--x-shift": `${p.horizontalShift}px` } as React.CSSProperties),
+              willChange: "transform, opacity",
+            }}
+          />
+        ))}
+      </div>
+    </>
+  );
+});
+
+// Assegna un nome per debugging
+ParticlesBackground.displayName = "ParticlesBackground";
+
 const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
   const [currentLine, setCurrentLine] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
+
   const poemLines = poem.content.split("\n").filter((line) => line.trim());
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
@@ -134,79 +255,8 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
         }}
       />
 
-      {/* Moving particles - più grandi e più visibili */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(50)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${Math.random() * 4 + 2}px`, // Aumentato da 3+1 a 4+2
-              height: `${Math.random() * 4 + 2}px`, // Aumentato da 3+1 a 4+2
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              // Aumentato l'opacità mantenendo gli stessi colori
-              background:
-                i % 3 === 0
-                  ? "rgba(139,92,246,0.9)" // Viola più visibile (da 0.8 a 0.9)
-                  : i % 3 === 1
-                  ? "rgba(236,72,153,0.9)" // Rosa più visibile (da 0.8 a 0.9)
-                  : "rgba(255,255,255,0.9)", // Bianco più visibile (da 0.8 a 0.9)
-              // Filtro blur leggermente ridotto per maggiore definizione
-              filter: "blur(0.8px)", // Ridotto da 1px a 0.8px
-              // Aggiungi un effetto glow attorno alle particelle
-              boxShadow: i % 3 === 0 ? "0 0 8px 2px rgba(139,92,246,0.3)" : i % 3 === 1 ? "0 0 8px 2px rgba(236,72,153,0.3)" : "0 0 8px 2px rgba(255,255,255,0.3)",
-            }}
-            animate={{
-              y: [0, -(Math.random() * 220 + 120)], // Movimento leggermente più lungo
-              opacity: [0, Math.random() * 0.9 + 0.4, 0], // Opacità massima aumentata
-            }}
-            transition={{
-              duration: Math.random() * 15 + 10,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "linear",
-              delay: Math.random() * 1.5,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Aggiungi un secondo layer di particelle più grandi e rare per varietà */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${Math.random() * 6 + 3}px`, // Particelle più grandi
-              height: `${Math.random() * 6 + 3}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              background:
-                i % 3 === 0
-                  ? "rgba(124,58,237,0.9)" // Viola
-                  : i % 3 === 1
-                  ? "rgba(244,114,182,0.9)" // Rosa
-                  : "rgba(255,255,255,0.9)", // Bianco
-              filter: "blur(1.5px)",
-              boxShadow: i % 3 === 0 ? "0 0 15px 4px rgba(139,92,246,0.4)" : i % 3 === 1 ? "0 0 15px 4px rgba(236,72,153,0.4)" : "0 0 15px 4px rgba(255,255,255,0.4)",
-            }}
-            animate={{
-              y: [0, -(Math.random() * 300 + 150)],
-              x: [0, Math.random() * 50 - 25], // Leggero movimento laterale
-              opacity: [0, Math.random() * 0.8 + 0.4, 0],
-            }}
-            transition={{
-              duration: Math.random() * 20 + 15,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "linear",
-              delay: Math.random() * 3,
-            }}
-          />
-        ))}
-      </div>
+      {/* Particles background - ora in un componente separato che non si ricaricherà */}
+      <ParticlesBackground />
 
       {/* Close button */}
       <motion.button
