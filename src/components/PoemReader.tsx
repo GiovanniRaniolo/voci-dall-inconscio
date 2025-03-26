@@ -134,23 +134,32 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
         }}
       />
 
-      {/* Moving particles */}
+      {/* Moving particles - più grandi e più visibili */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(120)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full"
             style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
+              width: `${Math.random() * 4 + 2}px`, // Aumentato da 3+1 a 4+2
+              height: `${Math.random() * 4 + 2}px`, // Aumentato da 3+1 a 4+2
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              background: i % 3 === 0 ? "rgba(139,92,246,0.8)" : i % 3 === 1 ? "rgba(236,72,153,0.8)" : "rgba(255,255,255,0.8)",
-              filter: "blur(1px)",
+              // Aumentato l'opacità mantenendo gli stessi colori
+              background:
+                i % 3 === 0
+                  ? "rgba(139,92,246,0.9)" // Viola più visibile (da 0.8 a 0.9)
+                  : i % 3 === 1
+                  ? "rgba(236,72,153,0.9)" // Rosa più visibile (da 0.8 a 0.9)
+                  : "rgba(255,255,255,0.9)", // Bianco più visibile (da 0.8 a 0.9)
+              // Filtro blur leggermente ridotto per maggiore definizione
+              filter: "blur(0.8px)", // Ridotto da 1px a 0.8px
+              // Aggiungi un effetto glow attorno alle particelle
+              boxShadow: i % 3 === 0 ? "0 0 8px 2px rgba(139,92,246,0.3)" : i % 3 === 1 ? "0 0 8px 2px rgba(236,72,153,0.3)" : "0 0 8px 2px rgba(255,255,255,0.3)",
             }}
             animate={{
-              y: [0, -(Math.random() * 200 + 100)],
-              opacity: [0, Math.random() * 0.7 + 0.3, 0],
+              y: [0, -(Math.random() * 220 + 120)], // Movimento leggermente più lungo
+              opacity: [0, Math.random() * 0.9 + 0.4, 0], // Opacità massima aumentata
             }}
             transition={{
               duration: Math.random() * 15 + 10,
@@ -158,6 +167,42 @@ const PoemReader: React.FC<PoemReaderProps> = ({ poem, onClose }) => {
               repeatType: "loop",
               ease: "linear",
               delay: Math.random() * 1.5,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Aggiungi un secondo layer di particelle più grandi e rare per varietà */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${Math.random() * 6 + 3}px`, // Particelle più grandi
+              height: `${Math.random() * 6 + 3}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              background:
+                i % 3 === 0
+                  ? "rgba(124,58,237,0.9)" // Viola
+                  : i % 3 === 1
+                  ? "rgba(244,114,182,0.9)" // Rosa
+                  : "rgba(255,255,255,0.9)", // Bianco
+              filter: "blur(1.5px)",
+              boxShadow: i % 3 === 0 ? "0 0 15px 4px rgba(139,92,246,0.4)" : i % 3 === 1 ? "0 0 15px 4px rgba(236,72,153,0.4)" : "0 0 15px 4px rgba(255,255,255,0.4)",
+            }}
+            animate={{
+              y: [0, -(Math.random() * 300 + 150)],
+              x: [0, Math.random() * 50 - 25], // Leggero movimento laterale
+              opacity: [0, Math.random() * 0.8 + 0.4, 0],
+            }}
+            transition={{
+              duration: Math.random() * 20 + 15,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "linear",
+              delay: Math.random() * 3,
             }}
           />
         ))}
