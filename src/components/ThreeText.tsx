@@ -21,7 +21,7 @@ const ThreeText: React.FC<ThreeTextProps> = ({ text, position = [0, 0, 0], color
 
     // Setup scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, containerRef.current.clientWidth / containerRef.current.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(35, containerRef.current.clientWidth / containerRef.current.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -52,8 +52,8 @@ const ThreeText: React.FC<ThreeTextProps> = ({ text, position = [0, 0, 0], color
     // Create material
     const textMaterial = new THREE.MeshStandardMaterial({
       color: new THREE.Color(color),
-      metalness: 0.3,
-      roughness: 0.4,
+      metalness: 0.9,
+      roughness: 0.9,
     });
 
     // Create mesh
@@ -61,17 +61,25 @@ const ThreeText: React.FC<ThreeTextProps> = ({ text, position = [0, 0, 0], color
     textMesh.position.set(...position);
     scene.add(textMesh);
 
+    // Enhanced lighting setup with more dramatic effects
     // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25); // Slightly increased ambient light
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0xa855f7, 1);
-    pointLight1.position.set(5, 5, 5);
-    scene.add(pointLight1);
+    // Purple light from upper left side
+    const purpleLight = new THREE.PointLight(0xa855f7, 1.2); // Slightly brighter
+    purpleLight.position.set(-3, 2, 2); // Positioned from left side
+    scene.add(purpleLight);
 
-    const pointLight2 = new THREE.PointLight(0xec4899, 1);
-    pointLight2.position.set(-5, -5, 5);
-    scene.add(pointLight2);
+    // Pink light from front-right - more visible as requested
+    const pinkLight = new THREE.PointLight(0xec4899, 1.5); // Brighter pink light
+    pinkLight.position.set(2, 0, 5); // Positioned more in front to be more visible
+    scene.add(pinkLight);
+
+    // Add a subtle rim light from behind for depth
+    const rimLight = new THREE.PointLight(0x2563eb, 0.7); // Blue rim light
+    rimLight.position.set(0, 3, -5); // Behind the text
+    scene.add(rimLight);
 
     // Position camera
     camera.position.z = 5;

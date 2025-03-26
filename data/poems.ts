@@ -31,7 +31,7 @@ in vano a sfidare il cielo`,
   {
     id: 4,
     title: "Dalle un nome",
-    content: `Schiaffo sonoro è quest'emozione
+    content: `Schiaffo sonoro è quest' emozione
 che si annida in gola e preme forte.
 Immortale affoga in un bicchiere
 sferzando l'anima quando torna.
@@ -49,7 +49,7 @@ Siete voi dal dozzinale sentire.
 L'egoico anelare di distinguervi.
 Il ripugnante vestirsi di ovvio.
 Siete ciò che non voglio
-negar di essser stato`,
+negar di esser stato`,
   },
   {
     id: 6,
@@ -82,7 +82,7 @@ Vedrò una luce`,
     title: "Abbandonico",
     content: `Strozzatura - costrizione - maledetto torpore. 
     Raziocinio spietato nel sabotaggio del sé.
-È lo Spirito senza velocità di fuga,
+E' lo Spirito senza velocità di fuga,
  per il gelido inverno che nel petto l'attrae.
 Piange e suda e si dimena. 
 Non può credere che il suo vuoto aperto 
@@ -140,9 +140,9 @@ Solo moti, mutamenti e frizioni.
 Non c'è nulla di stabile qui:
 Informi significati si fermano in bocca,
 mute parole s'incastrano in gola.
-È la voce di un chiunque
+E' la voce di un chiunque
 incastrato nella polvere.
-È diarrea verbale,
+E' diarrea verbale,
 entropia di un'anima.`,
   },
   {
@@ -156,7 +156,7 @@ Privazione e mancanza i sintomi.
 Ti struggi, ti affliggi, cerchi la fuga.
 Trovi uno spazio dentro il respiro,
 Un bagliore lì in fondo ti appare in miraggio.
-É la vita che fa eco da luoghi remoti.
+E' la vita che fa eco da luoghi remoti.
 Ma un disturbo sul fondo la inghiotte,
 e tu preghi di ascoltare ancora il suo grido`,
   },
@@ -179,7 +179,7 @@ e scivola via da te.`,
     id: 15,
     title: "Identità",
     content: `Cosa ti fa vibrare di gioia?
-È forse lo specchiarsi nell'altro
+E' forse lo specchiarsi nell'altro
 o l'essere riconosciuto umano?
 Un "anch'io" ti accomuna.
 Compreso, scovato stavolta!

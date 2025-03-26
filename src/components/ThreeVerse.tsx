@@ -9,7 +9,6 @@ interface ThreeVerseProps {
   isActive: boolean;
 }
 
-// Add this function to normalize accented characters
 function normalizeAccents(text: string): string {
   const accentMap: Record<string, string> = {
     à: "a'",
@@ -52,7 +51,6 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
   useEffect(() => {
     if (loading || error || !font || !containerRef.current) return;
 
-    // Setup scene
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, containerRef.current.clientWidth / containerRef.current.clientHeight, 0.1, 1000);
 
@@ -62,10 +60,9 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     });
 
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
 
-    // Apply centering styles to the canvas element
     renderer.domElement.style.display = "block";
     renderer.domElement.style.margin = "auto";
     renderer.domElement.style.position = "absolute";
@@ -76,37 +73,45 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
 
     containerRef.current.appendChild(renderer.domElement);
 
-    // Calculate appropriate text size based on viewport width
     const isMobile = window.innerWidth < 768;
-    const fontSize = isMobile ? 0.28 : 0.5; // Adjusted size
-    const textDepth = isMobile ? 0.08 : 0.1; // Adjusted depth
+    const fontSize = isMobile ? 0.35 : 0.6;
+    const textDepth = isMobile ? 0.4 : 0.4;
+    const lineMaxWidth = isMobile ? 2.0 : 4.0;
+    const lineSpacing = isMobile ? 0.75 : 1.3;
 
-    // More conservative lineMaxWidth
-    const lineMaxWidth = isMobile ? 2.5 : 5.0;
-    const lineSpacing = isMobile ? 0.75 : 1.0; // More space between lines
-
-    // Text materials with better contrast for mobile
-    const materialFront = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      metalness: 0.4,
-      roughness: 0.2,
-      emissive: 0x6d28d9,
-      emissiveIntensity: 0.2,
+    // Modifica il materialFront per reagire meglio alle luci rosa
+    const materialFront = new THREE.MeshPhysicalMaterial({
+      color: 0xf0f0ff,
+      metalness: 0.7, // Aumentato per riflettere meglio la luce
+      roughness: 0.1, // Ridotto per riflessi più nitidi
+      clearcoat: 0.3, // Aggiunge un sottile strato lucido
+      clearcoatRoughness: 0.1,
+      reflectivity: 0.5,
+      emissive: 0x000000,
     });
 
-    const materialSide = new THREE.MeshStandardMaterial({
-      color: 0xa855f7,
-      metalness: 0.4,
-      roughness: 0.3,
+    // Modifica il materialSide per reagire in modo più evidente alle luci rosa
+    const materialSide = new THREE.MeshPhysicalMaterial({
+      color: 0x9d4edd,
+      metalness: 0.7,
+      roughness: 0.01,
+      emissive: 0x6d28d9,
+      emissiveIntensity: 0.33,
+      clearcoat: 0.2,
+      clearcoatRoughness: 0.05,
     });
 
     const materials = [materialFront, materialSide];
 
-    // Parse the text into words
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    const context = canvas.getContext("2d");
+    const gradientTexture = new THREE.CanvasTexture(canvas);
+    materialSide.map = gradientTexture;
+
     const words = text.split(" ").filter((word) => word.trim().length > 0);
     const textMeshes: THREE.Mesh[] = [];
-
-    // Create text geometries for each word to measure them
     const wordWidths: number[] = [];
     const wordGeometries: THREE.BufferGeometry[] = [];
 
@@ -129,148 +134,214 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
       wordGeometries.push(geometry);
     });
 
-    // Arrange words in lines
     const lines: { words: number[]; width: number }[] = [];
     let currentLine: { words: number[]; width: number } = { words: [], width: 0 };
-    const wordSpacing = 0.15; // Reduced spacing between words to fit more
+    const wordSpacing = 0.3;
 
-    words.forEach((_, index) => {
+    words.forEach((word, index) => {
       const wordWidth = wordWidths[index];
 
-      // Special handling for first word of a line or small words
       if (currentLine.words.length === 0) {
-        // Always add the first word of a line
         currentLine.words.push(index);
         currentLine.width = wordWidth;
+      } else if (currentLine.words.length <= 1 && currentLine.width + wordWidth + wordSpacing <= lineMaxWidth * 1.2) {
+        currentLine.words.push(index);
+        currentLine.width += wordWidth + wordSpacing;
       } else if (words[index].length <= 3 && currentLine.width + wordWidth + wordSpacing <= lineMaxWidth * 1.1) {
-        // Always try to keep small words (3 chars or less) with the previous word
         currentLine.words.push(index);
         currentLine.width += wordWidth + wordSpacing;
       } else if (currentLine.width + wordWidth + wordSpacing <= lineMaxWidth) {
-        // Add word if it fits within the line width
+        currentLine.words.push(index);
+        currentLine.width += wordWidth + wordSpacing;
+      } else if (currentLine.words.length === 1 && currentLine.width + wordWidth + wordSpacing <= lineMaxWidth * 1.3) {
         currentLine.words.push(index);
         currentLine.width += wordWidth + wordSpacing;
       } else {
-        // Start a new line
         lines.push(currentLine);
         currentLine = { words: [index], width: wordWidth };
       }
     });
 
-    // Add the last line if it has words
     if (currentLine.words.length > 0) {
       lines.push(currentLine);
     }
 
-    // Add this after lines are calculated
-    console.log(
-      `Lines calculated: ${lines.length}, Words: ${words.length}, Line details:`,
-      lines.map((line) => ({
-        wordCount: line.words.length,
-        width: line.width,
-        words: line.words.map((idx) => words[idx]),
-      }))
-    );
+    const textGroupYOffset = isMobile ? ((lines.length - 1) * lineSpacing) / 2 + 1.0 : ((lines.length - 1) * lineSpacing) / 2 + 0.5;
 
-    // Apply more vertical offset for the text
-    const textGroupYOffset = isMobile
-      ? ((lines.length - 1) * lineSpacing) / 2 + 1.0 // Completely different approach - positive offset
-      : ((lines.length - 1) * lineSpacing) / 2 + 0.5; // Completely different approach - positive offset
+    let initialTiltX = (Math.random() * 0.3 + 0.2) * (Math.random() > 0.5 ? 1 : -1);
+    let initialTiltY = (Math.random() * 0.2 + 0.1) * (Math.random() > 0.5 ? 1 : -1);
 
-    // Position words based on lines
+    if (isMobile) {
+      initialTiltX *= 1.5;
+      initialTiltY *= 1.5;
+    }
+
+    const textGroup = new THREE.Group();
+    scene.add(textGroup);
+
     lines.forEach((line, lineIndex) => {
-      // Apply the vertical centering offset
       const lineY = textGroupYOffset + -lineIndex * lineSpacing;
       let lineX = -line.width / 2 + wordSpacing;
 
       line.words.forEach((wordIndex) => {
         const wordGeometry = wordGeometries[wordIndex];
-        const word = words[wordIndex];
-
-        // Create mesh for the word
         const mesh = new THREE.Mesh(wordGeometry, materials);
 
-        // Set initial position
         mesh.position.x = lineX;
         mesh.position.y = lineY;
 
-        // Apply ondulation effect based on position in line
         const wavePhase = (wordIndex / line.words.length) * Math.PI;
         mesh.position.z = Math.sin(wavePhase) * 0.2;
         mesh.rotation.x = Math.sin(wavePhase) * 0.1;
         mesh.rotation.y = Math.cos(wavePhase * 1.5) * 0.12;
 
-        // Add to scene and store reference
-        scene.add(mesh);
+        textGroup.add(mesh);
         textMeshes.push(mesh);
 
-        // Update x position for next word
         lineX += wordWidths[wordIndex] + wordSpacing;
       });
     });
 
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    textGroup.rotation.y = initialTiltX;
+    textGroup.rotation.x = initialTiltY;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    //luce direzionale rosa concentrata e puntiforme
+    const directionalLight = new THREE.SpotLight(0xec4899, 1.0);
     directionalLight.position.set(0, 10, 10);
+    directionalLight.angle = Math.PI / 8; // Angolo stretto per effetto più concentrato
+    directionalLight.penumbra = 0.2; // Penombra leggera per bordi morbidi
+    directionalLight.distance = 30; // Limita la distanza per mantenere il focus
+    directionalLight.decay = 1.5; // Aggiunge decay per effetto più realistico
     scene.add(directionalLight);
 
-    const pointLight1 = new THREE.PointLight(0xa855f7, 2);
-    pointLight1.position.set(5, 5, 5);
-    scene.add(pointLight1);
+    // Aggiungi un gruppo di piccole luci rosa puntiformi che si muoveranno tra le lettere
+    const spotlightsGroup = new THREE.Group();
+    scene.add(spotlightsGroup);
 
-    const pointLight2 = new THREE.PointLight(0xec4899, 2);
-    pointLight2.position.set(-5, -5, 5);
+    // Crea 3 piccole luci rosa puntiformi
+    const createSpotlights = () => {
+      const spotlights = [];
+      for (let i = 0; i < 3; i++) {
+        const spotLight = new THREE.PointLight(0xec4899, 5.0);
+        spotLight.distance = 5; // Raggio d'azione corto per effetto più localizzato
+        spotLight.decay = 1.0; // Decay più alto per effetto più concentrato
+        spotLight.position.set(
+          Math.random() * 4 - 2, // Posizione x casuale iniziale
+          Math.random() * 3 - 1.5, // Posizione y casuale iniziale
+          Math.random() * 2 + 2 // Posizione z casuale iniziale (davanti al testo)
+        );
+        spotlightsGroup.add(spotLight);
+        spotlights.push(spotLight);
+      }
+      return spotlights;
+    };
+
+    const spotlights = createSpotlights();
+
+    const pointLight2 = new THREE.PointLight(0xffffff, 30.0); // Luce bianca
+    pointLight2.position.set(-2, -2, 4);
+    pointLight2.distance = 20;
+    pointLight2.decay = 0.2;
     scene.add(pointLight2);
 
-    // Update the camera positioning section with much larger values
-    // Calculate how much to pull back the camera based on line count
+    const pointLight1 = new THREE.PointLight(0xa855f7, 15.0);
+    pointLight1.position.set(1, 1, 1);
+    pointLight1.distance = 0.1;
+    pointLight1.decay = 0.1;
+    scene.add(pointLight1);
+
+    const pointLight3 = new THREE.PointLight(0x3b82f6, 13.0);
+    pointLight3.position.set(0, -1.5, 4);
+    pointLight3.distance = 10;
+    pointLight3.decay = 0.2;
+    scene.add(pointLight3);
+
     const cameraZBase = isMobile ? 5.5 : 6.0;
     const cameraZMultiplier = isMobile ? 1.2 : 1.0;
     const extraCameraZ = isMobile ? 2.0 : 1.5;
-
-    // Pull back camera much further based on line count
     const cameraZ = Math.max(cameraZBase, cameraZBase + lines.length * cameraZMultiplier + extraCameraZ);
 
-    // Position camera much further back
     camera.position.z = cameraZ;
-    camera.position.y = isMobile ? 3.0 : 2.5; // Keep higher camera position
+    camera.position.y = isMobile ? 3.0 : 2.5;
 
-    // Log the camera position and line count for debugging
-    console.log(`Camera Z: ${cameraZ}, Lines: ${lines.length}`);
-
-    // Animation loop with subtle movement
     let frameId: number;
     const animate = () => {
       frameId = requestAnimationFrame(animate);
+      const time = Date.now() * 0.001;
 
-      // Subtle breathing animation for all words
-      textMeshes.forEach((mesh, index) => {
-        const time = Date.now() * 0.001;
-        const breatheSpeed = 0.2 + (index % 5) * 0.05;
-        const breatheAmount = 0.03;
+      const lightSpeed = 0.15;
+      const lightAmplitude = isMobile ? 1.5 : 1.2;
 
-        // Very gentle animations that don't require mouse input
-        mesh.position.y += Math.sin(time * breatheSpeed) * breatheAmount * 0.01;
-        mesh.rotation.x += Math.sin(time * breatheSpeed * 0.5) * 0.0005;
-        mesh.rotation.y += Math.cos(time * breatheSpeed * 0.3) * 0.0005;
+      // Movimento della luce bianca principale
+      const angle1 = time * lightSpeed * 0.1;
+      pointLight2.position.x = Math.cos(angle1) * 4 * lightAmplitude;
+      pointLight2.position.z = 3.5 + Math.sin(angle1) * 1.5 * lightAmplitude;
+      pointLight2.position.y = Math.sin(angle1 * 1.3) * 3 * lightAmplitude;
+
+      // Movimento della luce viola
+      const angle2 = time * lightSpeed * 0.08 + Math.PI / 2;
+      pointLight1.position.x = Math.sin(angle2) * 3.5 * lightAmplitude;
+      pointLight1.position.y = Math.cos(angle2) * 3 * lightAmplitude;
+      pointLight1.position.z = 4 + Math.sin(angle2 * 0.7) * 1.5 * lightAmplitude;
+
+      // Movimento della luce blu
+      const angle3 = time * lightSpeed * 0.05 + Math.PI;
+      pointLight3.position.x = Math.cos(angle3) * 4 * lightAmplitude;
+      pointLight3.position.y = -0.5 + Math.sin(angle3 * 1.1) * 3 * lightAmplitude;
+      pointLight3.position.z = 3 + Math.cos(angle3 * 0.9) * 2 * lightAmplitude;
+
+      // Movimento delle piccole luci rosa puntiformi tra le lettere
+      spotlights.forEach((spotlight, index) => {
+        // Usa curve di Lissajous per movimenti complessi tra le lettere
+        const speedOffset = index * 0.1;
+        const xFreq = 0.3 + index * 0.05;
+        const yFreq = 0.2 + index * 0.03;
+        const zFreq = 0.15 + index * 0.02;
+
+        // Calcola posizioni che passano proprio tra le lettere
+        // Usa range più limitati per x e y per stare dentro il testo
+        spotlight.position.x = Math.sin(time * xFreq + speedOffset) * (1.5 + index * 0.3);
+        spotlight.position.y = Math.cos(time * yFreq + speedOffset) * (0.8 + index * 0.2);
+        // Z oscilla leggermente davanti e dietro le lettere, ma principalmente davanti
+        spotlight.position.z = 0.5 + Math.sin(time * zFreq + speedOffset) * 0.6;
+
+        // Varia l'intensità per creare un effetto pulsante
+        spotlight.intensity = 5.0 + Math.sin(time * (0.5 + index * 0.1)) * 2.0;
       });
+
+      // Resto dell'animazione rimane invariato
+      textGroup.rotation.y = initialTiltX * Math.max(0, 1 - time * 0.1) + Math.sin(time * 0.3) * 0.15;
+      textGroup.rotation.x = initialTiltY * Math.max(0, 1 - time * 0.1) + Math.sin(time * 0.2) * 0.1;
+
+      textMeshes.forEach((mesh, index) => {
+        const breatheSpeed = 0.3 + (index % 5) * 0.08;
+        const breatheAmount = isMobile ? 0.06 : 0.04;
+
+        mesh.position.y += Math.sin(time * breatheSpeed) * breatheAmount * 0.02;
+        mesh.rotation.x += Math.sin(time * breatheSpeed * 0.7) * 0.001;
+        mesh.rotation.y += Math.cos(time * breatheSpeed * 0.5) * 0.001;
+      });
+
+      textGroup.position.y = Math.sin(time * 0.2) * 0.1;
+
+      if (context) {
+        const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, `hsl(${(time * 5) % 360}, 100%, 70%)`);
+        gradient.addColorStop(0.5, `hsl(${(time * 5 + 180) % 360}, 100%, 70%)`);
+        gradient.addColorStop(1, `hsl(${(time * 5) % 360}, 100%, 70%)`);
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        gradientTexture.needsUpdate = true;
+      }
 
       renderer.render(scene, camera);
     };
 
     animate();
 
-    // Let's add a debug indicator to visualize the center
-    // This will help us see the exact center of the scene
-    const centerIndicator = new THREE.Mesh(new THREE.SphereGeometry(0.02, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-    centerIndicator.position.set(0, 0, 0);
-    // Uncomment the next line if you want to see the center point
-    // scene.add(centerIndicator);
-
-    // Handle resize
     const handleResize = () => {
       if (!containerRef.current) return;
 
@@ -284,7 +355,6 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
 
     window.addEventListener("resize", handleResize);
 
-    // Cleanup
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
@@ -293,7 +363,6 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
         containerRef.current.removeChild(renderer.domElement);
       }
 
-      // Dispose resources
       textMeshes.forEach((mesh) => {
         mesh.geometry.dispose();
       });
@@ -304,22 +373,10 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     };
   }, [font, loading, error, text, isActive]);
 
-  // Also add debug for container dimensions
-  useEffect(() => {
-    if (containerRef.current) {
-      console.log("Container dimensions:", {
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight,
-      });
-    }
-  }, [containerRef.current?.clientWidth, containerRef.current?.clientHeight]);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <motion.div className="text-2xl text-purple-400" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}>
-          Caricamento poesia...
-        </motion.div>
+        <motion.div className="text-2xl text-purple-400" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}></motion.div>
       </div>
     );
   }
@@ -329,15 +386,14 @@ const ThreeVerse: React.FC<ThreeVerseProps> = ({ text, isActive }) => {
     return <div className="text-center text-red-400">Errore nel caricamento del testo 3D</div>;
   }
 
-  // Update the return statement to ensure the component fills its container
   return (
     <motion.div
       ref={containerRef}
       className="w-full h-full"
       style={{
         minHeight: "100%",
-        overflow: "visible", // Critical: Allow overflow outside container
-        position: "absolute", // Position absolute in parent
+        overflow: "visible",
+        position: "absolute",
         inset: 0,
       }}
       initial={{ opacity: 0 }}
