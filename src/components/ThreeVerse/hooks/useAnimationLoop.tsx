@@ -46,18 +46,51 @@ export function useAnimationLoop({ renderer, scene, camera, textGroup, textMeshe
     lights.pointLight3.position.y = Math.sin(angle3 * 0.5) * 2 * lightAmplitude;
     lights.pointLight3.position.z = 2 + Math.cos(angle3 * 0.2) * lightAmplitude;
 
-    // Movimento delle luci puntiformi
+    // Animazione migliorata per le luci spot
     lights.spotlights.forEach((spotlight, index) => {
-      const speedOffset = index * 0.1;
-      const xFreq = 0.3 + index * 0.05;
-      const yFreq = 0.2 + index * 0.03;
-      const zFreq = 0.15 + index * 0.02;
+      if (!spotlight.userData) return; // Verifica che userData esista
 
-      spotlight.position.x = Math.sin(time * xFreq + speedOffset) * (1.5 + index * 0.3);
-      spotlight.position.y = Math.cos(time * yFreq + speedOffset) * (0.8 + index * 0.2);
-      spotlight.position.z = 0.5 + Math.sin(time * zFreq + speedOffset) * 0.6;
+      const userData = spotlight.userData;
+      const phase = userData.phase || 0;
 
-      spotlight.intensity = 5.0 + Math.sin(time * (0.5 + index * 0.1)) * 2.0;
+      // Movimento più complesso con path Lissajous per coprire più spazio
+      const speedX = userData.movementSpeed.x;
+      const speedY = userData.movementSpeed.y;
+      const speedZ = userData.movementSpeed.z;
+
+      const radiusX = userData.movementRadius.x;
+      const radiusY = userData.movementRadius.y;
+      const radiusZ = userData.movementRadius.z;
+
+      // Movimento orbitale complesso
+      spotlight.position.x = Math.sin(time * speedX + phase) * radiusX;
+      spotlight.position.y = Math.sin(time * speedY + phase * 1.3) * radiusY;
+      spotlight.position.z = 2 + Math.cos(time * speedZ + phase * 0.7) * radiusZ;
+
+      // Variazione sinusoidale dell'intensità per un effetto pulsante più evidente
+      const pulseFreq = 0.5 + index * 0.12;
+      const pulseAmp = 0.35; // Ampiezza pulsazione (più alta = più evidente)
+      spotlight.intensity = userData.baseIntensity * (1 + Math.sin(time * pulseFreq) * pulseAmp);
+
+      // Shift graduale del colore per effetti più dinamici
+      const hueShift = (time * userData.colorShift) % 1;
+      const color = userData.originalColor.clone();
+
+      // Estrai HSL
+      const hsl = { h: 0, s: 0, l: 0 };
+      color.getHSL(hsl);
+
+      // Modifica hue - mantieni nei toni viola/rosa
+      const baseHue = hsl.h;
+      const newHue = (baseHue + hueShift * 0.2) % 1; // Limita la variazione di colore
+
+      // Riapplica HSL con nuova tonalità
+      color.setHSL(newHue, Math.min(1, hsl.s * 1.1), Math.min(1, hsl.l * 1.05));
+      spotlight.color.copy(color);
+
+      // Aggiungi piccoli movimenti casuali per un effetto più naturale
+      spotlight.position.x += Math.sin(time * 2.5 + index * 10) * 0.02;
+      spotlight.position.y += Math.cos(time * 2.3 + index * 8) * 0.02;
     });
 
     // Animazione del gruppo di testo

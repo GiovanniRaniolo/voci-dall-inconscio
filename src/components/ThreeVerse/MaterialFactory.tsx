@@ -16,18 +16,18 @@ export function createMaterials(options: MaterialOptions) {
   // Materiale frontale
   const materialFront = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
-    metalness: options.isMobile ? 0.75 : 0.5, // Aumentato per mobile
-    roughness: options.isMobile ? 0.01 : 0.02, // Più lucido su mobile
-    clearcoat: 0.8,
+    metalness: options.isMobile ? 0.91 : 0.96, // Aumentato per mobile
+    roughness: options.isMobile ? 0.01 : 0.01, // Più lucido su mobile
+
+    clearcoat: 1,
     clearcoatRoughness: 0.1,
-    reflectivity: 0.5,
-    emissive: options.isMobile ? 0x333333 : 0x222222, // Più luminoso su mobile
+    reflectivity: 1,
   });
 
   // Materiale laterale
   const materialSide = new THREE.MeshPhysicalMaterial({
     color: 0x9d4edd,
-    metalness: options.isMobile ? 0.85 : 0.8, // Più metallico su mobile
+    metalness: options.isMobile ? 0.88 : 0.9, // Più metallico su mobile
     roughness: 0.01,
     emissive: 0x6d28d9,
     emissiveIntensity: options.isMobile ? 0.25 : 0.2, // Più intenso su mobile
