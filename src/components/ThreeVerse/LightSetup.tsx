@@ -37,7 +37,7 @@ export function createLights({ scene, isMobile }: LightOptions) {
 
   // Crea più luci spot con distribuzione ottimizzata
   const spotlights = [];
-  const numSpots = isMobile ? 5 : 7; // Più luci rispetto alla versione precedente
+  const numSpots = isMobile ? 7 : 9; // Più luci rispetto alla versione precedente
 
   for (let i = 0; i < numSpots; i++) {
     // Seleziona un colore dalla palette

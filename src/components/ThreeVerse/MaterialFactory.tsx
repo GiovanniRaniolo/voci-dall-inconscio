@@ -15,8 +15,8 @@ export function createMaterials(options: MaterialOptions) {
 
   // Materiale frontale
   const materialFront = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    metalness: options.isMobile ? 0.91 : 0.96, // Aumentato per mobile
+    color: 0x000000,
+    metalness: options.isMobile ? 1 : 1, // Aumentato per mobile
     roughness: options.isMobile ? 0.01 : 0.01, // Più lucido su mobile
 
     clearcoat: 1,
@@ -27,7 +27,7 @@ export function createMaterials(options: MaterialOptions) {
   // Materiale laterale
   const materialSide = new THREE.MeshPhysicalMaterial({
     color: 0x9d4edd,
-    metalness: options.isMobile ? 0.88 : 0.9, // Più metallico su mobile
+    metalness: options.isMobile ? 0.7 : 0.9, // Più metallico su mobile
     roughness: 0.01,
     emissive: 0x6d28d9,
     emissiveIntensity: options.isMobile ? 0.25 : 0.2, // Più intenso su mobile

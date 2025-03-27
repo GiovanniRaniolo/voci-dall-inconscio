@@ -25,7 +25,7 @@ export function useAnimationLoop({ renderer, scene, camera, textGroup, textMeshe
     frameId = requestAnimationFrame(animate);
     const time = Date.now() * 0.001;
 
-    const lightSpeed = 0.15;
+    const lightSpeed = 0.05;
     const lightAmplitude = isMobile ? 1.5 : 1.2;
 
     // Movimento della luce bianca principale
@@ -62,10 +62,13 @@ export function useAnimationLoop({ renderer, scene, camera, textGroup, textMeshe
       const radiusY = userData.movementRadius.y;
       const radiusZ = userData.movementRadius.z;
 
-      // Movimento orbitale complesso
-      spotlight.position.x = Math.sin(time * speedX + phase) * radiusX;
-      spotlight.position.y = Math.sin(time * speedY + phase * 1.3) * radiusY;
-      spotlight.position.z = 2 + Math.cos(time * speedZ + phase * 0.7) * radiusZ;
+      // Aggiungi il moltiplicatore di velocità qui
+      const speedMultiplier = 0.4; // Modifica questo valore per aumentare/diminuire la velocità
+
+      // Movimento orbitale complesso con velocità modificata
+      spotlight.position.x = Math.sin(time * speedX * speedMultiplier + phase) * radiusX;
+      spotlight.position.y = Math.sin(time * speedY * speedMultiplier + phase * 1.3) * radiusY;
+      spotlight.position.z = 2 + Math.cos(time * speedZ * speedMultiplier + phase * 0.7) * radiusZ;
 
       // Variazione sinusoidale dell'intensità per un effetto pulsante più evidente
       const pulseFreq = 0.5 + index * 0.12;
