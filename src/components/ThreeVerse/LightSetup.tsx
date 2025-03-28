@@ -6,11 +6,11 @@ interface LightOptions {
 }
 
 export function createLights({ scene, isMobile }: LightOptions) {
-  // Luce ambientale - manteniamo una luce base ma più bassa per far risaltare gli effetti luminosi
+  // Luce ambientale - luce base  bassa per far risaltare gli effetti luminosi
   const ambientLight = new THREE.AmbientLight(0xffffff, isMobile ? 0.45 : 0.5);
   scene.add(ambientLight);
 
-  // Luce direzionale principale - leggermente attenuata per far risaltare le luci spot
+  // Luce direzionale principale - attenuata per far risaltare le luci spot
   const directionalLight = new THREE.SpotLight(0xec4899, isMobile ? 1.1 : 0.9);
   directionalLight.position.set(0, 10, 10);
   directionalLight.angle = Math.PI / 8;
@@ -35,9 +35,9 @@ export function createLights({ scene, isMobile }: LightOptions) {
     0xf0abfc, // Rosa chiaro
   ];
 
-  // Crea più luci spot con distribuzione ottimizzata
+  // Luci spot
   const spotlights = [];
-  const numSpots = isMobile ? 7 : 9; // Più luci rispetto alla versione precedente
+  const numSpots = isMobile ? 7 : 9;
 
   for (let i = 0; i < numSpots; i++) {
     // Seleziona un colore dalla palette
@@ -47,24 +47,21 @@ export function createLights({ scene, isMobile }: LightOptions) {
     // Crea una luce spot con intensità maggiore
     const spotLight = new THREE.PointLight(color, isMobile ? 8.0 : 7.0);
 
-    // Aumenta la distanza e riduci il decay per un'influenza più ampia
     spotLight.distance = 12; // Raggio di influenza maggiore
     spotLight.decay = 0.7; // Decadimento più graduale
 
-    // Distribuisci le luci in modo più uniforme nello spazio
-    // Copre meglio l'area del testo sia in altezza che in larghezza
     const angle = (i / numSpots) * Math.PI * 2; // Distribuzione circolare
     const radius = 1.5 + Math.random() * 2.5;
 
     spotLight.position.x = Math.cos(angle) * radius;
-    spotLight.position.y = Math.random() * 5 - 2.5; // Distribuzione verticale più ampia
+    spotLight.position.y = Math.random() * 5 - 2.5; // Distribuzione verticale
     spotLight.position.z = 2 + Math.random() * 3; // Varia la profondità ma mantienile davanti al testo
 
-    // Aggiungi proprietà personalizzate per l'animazione
+    // Proprietà personalizzate per l'animazione
     spotLight.userData = {
       baseIntensity: spotLight.intensity,
       originalColor: new THREE.Color(color),
-      colorShift: 0.02 + Math.random() * 0.04, // Velocità di cambio colore personalizzata per ogni luce
+      colorShift: 0.02 + Math.random() * 0.04, // Velocità di cambio colore per ogni luce
       movementSpeed: {
         x: 0.3 + Math.random() * 0.4,
         y: 0.25 + Math.random() * 0.35,

@@ -61,19 +61,19 @@ const ThreeText: React.FC<ThreeTextProps> = ({ text, position = [0, 0, 0], color
     textMesh.position.set(...position);
     scene.add(textMesh);
 
-    // Enhanced lighting setup with more dramatic effects
     // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25); // Slightly increased ambient light
+    // Ambient white light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
     scene.add(ambientLight);
 
     // Purple light from upper left side
-    const purpleLight = new THREE.PointLight(0xa855f7, 1.2); // Slightly brighter
+    const purpleLight = new THREE.PointLight(0xa855f7, 1.2);
     purpleLight.position.set(-3, 2, 2); // Positioned from left side
     scene.add(purpleLight);
 
-    // Pink light from front-right - more visible as requested
-    const pinkLight = new THREE.PointLight(0xec4899, 1.5); // Brighter pink light
-    pinkLight.position.set(2, 0, 5); // Positioned more in front to be more visible
+    // Pink light from front-right
+    const pinkLight = new THREE.PointLight(0xec4899, 1.5);
+    pinkLight.position.set(2, 0, 5); // Positioned in front to be more visible
     scene.add(pinkLight);
 
     // Add a subtle rim light from behind for depth

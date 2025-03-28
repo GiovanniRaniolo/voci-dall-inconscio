@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FontLoader, Font } from "three/examples/jsm/loaders/FontLoader.js";
 
-// Creiamo una cache globale per i font
+// Cache globale per i font
 const fontCache = new Map<string, Font>();
 
 export function useFontLoader(fontPath: string = "helvetiker_regular.typeface.json") {
@@ -46,7 +46,7 @@ export function useFontLoader(fontPath: string = "helvetiker_regular.typeface.js
   return { font, loading, error };
 }
 
-// Esporta una funzione per precaricare il font
+// Funzione per precaricare il font
 export function prefetchFont(fontPath: string = "helvetiker_regular.typeface.json"): Promise<Font> {
   return new Promise((resolve, reject) => {
     // Verifica se il font è già in cache

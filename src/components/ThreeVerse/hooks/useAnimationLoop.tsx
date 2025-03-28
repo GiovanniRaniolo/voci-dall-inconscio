@@ -62,20 +62,20 @@ export function useAnimationLoop({ renderer, scene, camera, textGroup, textMeshe
       const radiusY = userData.movementRadius.y;
       const radiusZ = userData.movementRadius.z;
 
-      // Aggiungi il moltiplicatore di velocità qui
-      const speedMultiplier = 0.4; // Modifica questo valore per aumentare/diminuire la velocità
+      // Moltiplicatore di velocità qui
+      const speedMultiplier = 0.4; // aumentare/diminuire la velocità
 
-      // Movimento orbitale complesso con velocità modificata
+      // Movimento orbitale complesso
       spotlight.position.x = Math.sin(time * speedX * speedMultiplier + phase) * radiusX;
       spotlight.position.y = Math.sin(time * speedY * speedMultiplier + phase * 1.3) * radiusY;
       spotlight.position.z = 2 + Math.cos(time * speedZ * speedMultiplier + phase * 0.7) * radiusZ;
 
-      // Variazione sinusoidale dell'intensità per un effetto pulsante più evidente
+      // Variazione sinusoidale dell'intensità per un effetto pulsante
       const pulseFreq = 0.5 + index * 0.12;
       const pulseAmp = 0.35; // Ampiezza pulsazione (più alta = più evidente)
       spotlight.intensity = userData.baseIntensity * (1 + Math.sin(time * pulseFreq) * pulseAmp);
 
-      // Shift graduale del colore per effetti più dinamici
+      // Shift graduale del colore
       const hueShift = (time * userData.colorShift) % 1;
       const color = userData.originalColor.clone();
 
@@ -91,7 +91,7 @@ export function useAnimationLoop({ renderer, scene, camera, textGroup, textMeshe
       color.setHSL(newHue, Math.min(1, hsl.s * 1.1), Math.min(1, hsl.l * 1.05));
       spotlight.color.copy(color);
 
-      // Aggiungi piccoli movimenti casuali per un effetto più naturale
+      // Aggiungi piccoli movimenti casuali
       spotlight.position.x += Math.sin(time * 2.5 + index * 10) * 0.02;
       spotlight.position.y += Math.cos(time * 2.3 + index * 8) * 0.02;
     });

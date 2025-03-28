@@ -12,7 +12,7 @@ const PoetryCover: React.FC<PoetryCoverProps> = ({ poem, onClick }) => {
   const isInView = useInView(ref, { once: false, amount: 0.3 });
   const controls = useAnimation();
 
-  // Continuous subtle animations for all devices
+  // Continuous subtle animations
   useEffect(() => {
     if (isInView) {
       controls.start("visible");
@@ -94,8 +94,8 @@ const PoetryCover: React.FC<PoetryCoverProps> = ({ poem, onClick }) => {
           const particleCount = 3 + Math.floor(animSeed % 4); // yields 3-6 particles
           return [...Array(particleCount)].map((_, i) => {
             // Calculate base offsets influenced by animSeed
-            const baseTop = 10 + (animSeed % 30); // a base top offset between 10% and 40%
-            const baseLeft = 5 + (animSeed % 25); // a base left offset between 5% and 30%
+            const baseTop = 10 + (animSeed % 30);
+            const baseLeft = 5 + (animSeed % 25);
 
             // Vary each particle position based on its index and the seed
             const topOffset = baseTop + i * (5 + ((animSeed + i) % 10)); // adds dynamic vertical spacing

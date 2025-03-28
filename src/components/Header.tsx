@@ -20,14 +20,14 @@ const Header: React.FC = () => {
         <div className="flex flex-col items-center">
           {/* Animated container with stable title */}
           <motion.div className="relative mb-4" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
-            {/* Main title - NO continuous animation */}
+            {/* Main title */}
             <h1 className="text-xl sm:text-2xl md:text-3xl tracking-[0.2em] font-light uppercase text-center">
               <motion.span
                 className="bg-clip-text text-transparent"
                 style={{
                   backgroundImage: "linear-gradient(90deg, rgba(255,255,255,1), rgba(180,180,180,1))",
                 }}
-                // Only subtle gradient animation, no movement
+                // Subtle gradient animation
                 animate={{
                   backgroundImage: [
                     "linear-gradient(90deg, rgba(255,255,255,1), rgba(180,180,180,1))",
