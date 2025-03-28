@@ -63,7 +63,7 @@ const ThreeText: React.FC<ThreeTextProps> = ({ text, position = [0, 0, 0], color
 
     // Add lights
     // Ambient white light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
 
     // Purple light from upper left side

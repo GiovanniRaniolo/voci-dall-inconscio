@@ -18,22 +18,19 @@ export const useViewportAdjustment = () => {
       return "-70px";
     }
     // Dispositivi mobili standard
-    else if (width < 768) {
-      return "-50px";
+    else if (width < 1024) {
+      return "-150px";
     }
     // iPad detection (usando sia dimensioni che aspect ratio)
     else if (width >= 768 && width <= 1024 && aspectRatio > 0.6 && aspectRatio < 1.5) {
-      // Valori per iPad
-      return "-60px";
+      return "-200px";
     }
     // Desktop standard (risoluzione tipica 1366x768, 1440x900, 1920x1080)
-    else if (width >= 1025 && width <= 1920) {
-      // Per desktop standard, alziamo ulteriormente il testo
-      return "200px"; // Aumentato significativamente da -50px a -150px
+    else if (width >= 1024 && width <= 1920) {
+      return "240px";
     }
     // Desktop grandi (risoluzione oltre 1920px)
     else {
-      // Per desktop molto grandi, manteniamo il valore attuale
       return "-50px";
     }
   };
