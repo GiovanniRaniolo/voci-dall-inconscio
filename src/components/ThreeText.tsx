@@ -93,6 +93,14 @@ const ThreeText: React.FC<ThreeTextProps> = ({ text, position = [0, 0, 0], color
       textMesh.rotation.y = Math.sin(Date.now() * 0.001) * 0.1;
       textMesh.rotation.x = Math.cos(Date.now() * 0.001) * 0.05;
 
+      // Pulsating effect
+      const scale = 1 + Math.sin(Date.now() * 0.002) * 0.1;
+      textMesh.scale.set(scale, scale, scale);
+
+      // Glowing effect using emissive color
+      const glowIntensity = 0.5 + Math.sin(Date.now() * 0.003) * 0.5;
+      textMaterial.emissive = new THREE.Color(glowIntensity, glowIntensity, glowIntensity);
+
       renderer.render(scene, camera);
     };
 

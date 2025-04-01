@@ -24,7 +24,20 @@ export const useKeyNavigation = ({ onNext, onPrevious, onEscape, dependencies = 
       }
     };
 
+    // Add mouse wheel support for navigation
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) {
+        onNext();
+      } else if (e.deltaY < 0) {
+        onPrevious();
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("wheel", handleWheel);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("wheel", handleWheel);
+    };
   }, dependencies);
 };
