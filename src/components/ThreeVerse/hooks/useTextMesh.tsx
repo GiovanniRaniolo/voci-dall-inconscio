@@ -13,7 +13,7 @@ interface TextMeshOptions {
 
 export function useTextMesh({ text, font, materials, isMobile, isHighEndMobile }: TextMeshOptions) {
   // Parametri per il testo
-  const fontSize = isMobile ? 0.5 : 0.6; // Increased font size for mobile
+  const fontSize = isMobile ? 0.41 : 0.6; // Increased font size for mobile
   const textDepth = isMobile ? 0.4 : 0.4;
   const lineMaxWidth = isMobile ? 3.0 : 4.0; // Adjusted max width for mobile to fit screen
   const lineSpacing = isMobile ? 0.75 : 1.1;
